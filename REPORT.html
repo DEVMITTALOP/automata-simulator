@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Project Report - NFA to DFA Automata Simulator</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 20mm 18mm 20mm 18mm;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", Calibri, Arial, sans-serif;
+      color: #1e293b;
+      line-height: 1.55;
+      font-size: 10.5pt;
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+    }
+
+    /* Cover Page */
+    .cover-page {
+      page-break-after: always;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 250mm;
+      border: 2px solid #1e3a8a;
+      padding: 36px 40px;
+      text-align: center;
+    }
+
+    .cover-top {
+      margin-top: 20px;
+    }
+
+    .cover-badge {
+      display: inline-block;
+      background: #eff6ff;
+      color: #1e3a8a;
+      border: 1px solid #93c5fd;
+      padding: 6px 18px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 10pt;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .cover-title {
+      font-size: 24pt;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 12px 0;
+      line-height: 1.25;
+    }
+
+    .cover-subtitle {
+      font-size: 13pt;
+      color: #334155;
+      margin-bottom: 30px;
+    }
+
+    .cover-divider {
+      width: 80px;
+      height: 4px;
+      background: #1e3a8a;
+      margin: 24px auto;
+    }
+
+    .cover-meta {
+      text-align: left;
+      max-width: 460px;
+      margin: 30px auto;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 20px 26px;
+    }
+
+    .cover-meta table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0;
+    }
+
+    .cover-meta td {
+      border: none;
+      padding: 6px 4px;
+      font-size: 10.5pt;
+      text-align: left;
+    }
+
+    .cover-meta td:first-child {
+      font-weight: 700;
+      color: #1e3a8a;
+      width: 44%;
+    }
+
+    .cover-footer {
+      font-size: 9.5pt;
+      color: #64748b;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 14px;
+    }
+
+    /* Headings */
+    h1 {
+      font-size: 15pt;
+      color: #1e3a8a;
+      border-bottom: 2px solid #1e3a8a;
+      padding-bottom: 4px;
+      margin-top: 22px;
+      margin-bottom: 10px;
+      page-break-after: avoid;
+    }
+
+    h2 {
+      font-size: 12pt;
+      color: #0f172a;
+      margin-top: 14px;
+      margin-bottom: 6px;
+      page-break-after: avoid;
+    }
+
+    p {
+      margin: 6px 0 10px 0;
+      text-align: justify;
+    }
+
+    ul, ol {
+      margin: 6px 0 10px 20px;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 4px;
+    }
+
+    /* Math & Code Blocks */
+    .math-block {
+      background: #f8fafc;
+      border-left: 4px solid #1e3a8a;
+      padding: 10px 14px;
+      margin: 10px 0;
+      font-family: "Cambria Math", "Times New Roman", serif;
+      font-size: 11pt;
+      text-align: center;
+    }
+
+    pre {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 12px 14px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 9pt;
+      line-height: 1.45;
+      overflow-x: auto;
+      page-break-inside: avoid;
+    }
+
+    code {
+      font-family: Consolas, "Courier New", monospace;
+      background: #f1f5f9;
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-size: 9.5pt;
+    }
+
+    /* Tables */
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 9.5pt;
+      page-break-inside: avoid;
+    }
+
+    table.data-table th,
+    table.data-table td {
+      border: 1px solid #cbd5e1;
+      padding: 7px 9px;
+      text-align: left;
+    }
+
+    table.data-table th {
+      background: #1e3a8a;
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    table.data-table tr:nth-child(even) {
+      background: #f8fafc;
+    }
+
+    .badge-pass {
+      background: #dcfce7;
+      color: #166534;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 8.5pt;
+    }
+
+    /* Figures & Screenshots */
+    .figure-box {
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 10px;
+      margin: 14px 0;
+      text-align: center;
+      background: #f8fafc;
+      page-break-inside: avoid;
+    }
+
+    .figure-box img {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #94a3b8;
+      border-radius: 4px;
+    }
+
+    .figure-caption {
+      font-size: 9pt;
+      color: #475569;
+      font-style: italic;
+      margin-top: 6px;
+    }
+
+    .page-break {
+      page-break-before: always;
+    }
+
+    .toc-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 14px 20px;
+      margin-bottom: 18px;
+    }
+
+    .toc-box ol {
+      margin: 6px 0 0 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- COVER PAGE -->
+  <div class="cover-page">
+    <div class="cover-top">
+      <div class="cover-badge">Simulator Design M2 — Technical Project Report</div>
+      <div class="cover-title">Automata Simulator:<br>NFA to DFA Conversion</div>
+      <div class="cover-subtitle">Subset Construction, Transition Tables, Generated DFA States &amp; String Testing</div>
+      <div class="cover-divider"></div>
+    </div>
+
+    <div class="cover-meta">
+      <table>
+        <tr>
+          <td>Topic Number:</td>
+          <td>1 — NFA &rarr; DFA Conversion</td>
+        </tr>
+        <tr>
+          <td>Evaluation Window:</td>
+          <td>23–27 November 2026</td>
+        </tr>
+        <tr>
+          <td>Submitted By:</td>
+          <td>Dev Mittal (Solo Contributor)</td>
+        </tr>
+        <tr>
+          <td>Enrollment No.:</td>
+          <td>S24CSEU0833</td>
+        </tr>
+        <tr>
+          <td>Submission Type:</td>
+          <td>Working Simulator, Source Code, Test Suite &amp; Report</td>
+        </tr>
+        <tr>
+          <td>Tech Stack:</td>
+          <td>HTML5 / CSS3 / JavaScript (Canvas), Python 3 (CLI &amp; Tkinter GUI)</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="cover-footer">
+      Theory of Computation / Formal Languages &amp; Automata Theory<br>
+      Independent Project Submission — November 2026
+    </div>
+  </div>
+
+  <!-- TABLE OF CONTENTS -->
+  <div class="toc-box">
+    <h2 style="margin-top:0; color:#1e3a8a;">Table of Contents</h2>
+    <ol>
+      <li>Abstract &amp; Problem Statement</li>
+      <li>Theoretical Foundation (NFA, DFA &amp; &epsilon;-Closure)</li>
+      <li>Methodology &amp; Subset Construction Algorithm</li>
+      <li>System Architecture &amp; Design</li>
+      <li>Implementation Details &amp; Code Documentation</li>
+      <li>Simulator Screenshots &amp; Output Walkthrough</li>
+      <li>Testing &amp; Validation Results (Normal &amp; Edge Cases)</li>
+      <li>Individual Contribution Details</li>
+      <li>Conclusion</li>
+    </ol>
+  </div>
+
+  <!-- SECTION 1 -->
+  <h1>1. Abstract &amp; Problem Statement</h1>
+  <p>
+    In Formal Language Theory and Compiler Design, Non-Deterministic Finite Automata (NFA) provide a compact, human-intuitive way to model regular languages—especially when derived from regular expressions. However, NFAs cannot be directly executed in deterministic hardware or single-pass lexical analyzers without backtracking or tracking parallel state sets. Deterministic Finite Automata (DFA) eliminate this non-determinism, guaranteeing O(<em>n</em>) time complexity for scanning an input string of length <em>n</em>.
+  </p>
+  <p>
+    This project implements a lightweight, user-friendly <strong>Automata Simulator for NFA to DFA Conversion</strong>. Given any user-defined NFA (with optional &epsilon;-transitions), the simulator applies the <strong>Subset Construction (Powerset) Algorithm</strong> to compute reachable state subsets, generates equivalent DFA transition tables and state mappings, renders live state diagrams, and verifies equivalence through step-by-step string testing across both normal and edge cases.
+  </p>
+
+  <!-- SECTION 2 -->
+  <h1>2. Theoretical Foundation</h1>
+
+  <h2>2.1 Non-Deterministic Finite Automaton (NFA)</h2>
+  <p>An NFA is formally defined as a 5-tuple <em>M</em> = (<em>Q</em>, &Sigma;, &delta;, <em>q</em><sub>0</sub>, <em>F</em>), where:</p>
+  <ul>
+    <li><strong><em>Q</em></strong> is a finite, non-empty set of states.</li>
+    <li><strong>&Sigma;</strong> is a finite set of input symbols (alphabet).</li>
+    <li><strong>&delta; : <em>Q</em> &times; (&Sigma; &cup; {&epsilon;}) &rarr; <em>P</em>(<em>Q</em>)</strong> is the transition function mapping a state and symbol (or &epsilon;) to a subset of states.</li>
+    <li><strong><em>q</em><sub>0</sub> &isin; <em>Q</em></strong> is the initial (start) state.</li>
+    <li><strong><em>F</em> &sube; <em>Q</em></strong> is the set of accepting (final) states.</li>
+  </ul>
+
+  <h2>2.2 Deterministic Finite Automaton (DFA)</h2>
+  <p>A DFA is formally defined as <em>M'</em> = (<em>Q'</em>, &Sigma;, &delta;', <em>q</em><sub>0</sub>', <em>F'</em>), where every transition <strong>&delta;' : <em>Q'</em> &times; &Sigma; &rarr; <em>Q'</em></strong> maps a state and input symbol to exactly <strong>one</strong> destination state, with no &epsilon;-transitions.</p>
+
+  <h2>2.3 Epsilon Closure (&epsilon;-closure) &amp; Equivalence</h2>
+  <p>
+    By the <strong>Rabin–Scott Theorem</strong>, every NFA has an equivalent DFA recognizing the exact same language. For any set of states <em>S</em> &sube; <em>Q</em>, &epsilon;-closure(<em>S</em>) is the set of all states reachable from states in <em>S</em> using zero or more &epsilon;-transitions:
+  </p>
+  <div class="math-block">
+    q<sub>0</sub>' = &epsilon;-closure({q<sub>0</sub>}) &nbsp;&nbsp;|&nbsp;&nbsp; F' = { S &isin; Q' &mid; S &cap; F &ne; &empty; }
+  </div>
+
+  <!-- SECTION 3 -->
+  <h1>3. Methodology &amp; Subset Construction Algorithm</h1>
+  <p>
+    The simulator converts an input NFA into an equivalent DFA using Breadth-First exploration of reachable subsets starting from &epsilon;-closure({<em>q</em><sub>0</sub>}). Unreachable powerset combinations are omitted, keeping the generated DFA minimal and clean. Empty transitions are routed to an explicit non-accepting <code>DEAD</code> (&Phi;) trap state when needed.
+  </p>
+
+  <h2>3.1 Algorithm Pseudocode</h2>
+<pre>Algorithm: NFA_to_DFA_Subset_Construction(Q, Σ, δ, q0, F)
+1.  initial_subset ← epsilon_closure({q0})
+2.  Assign canonical label S0 ← initial_subset
+3.  Q' ← {S0};  Queue ← [S0];  δ' ← {};  F' ← {}
+4.  If (initial_subset ∩ F ≠ ∅) then add S0 to F'
+5.  While Queue is not empty:
+6.      curr_subset ← Dequeue(Queue)
+7.      curr_name   ← LabelOf(curr_subset)
+8.      For each symbol 'a' in Σ:
+9.          move_set    ← ⋃ { δ(q, a) | q ∈ curr_subset }
+10.         next_subset ← epsilon_closure(move_set)
+11.         If next_subset is empty:
+12.             next_name ← "DEAD"
+13.         Else:
+14.             If next_subset not in Q':
+15.                 next_name ← "S" + counter++
+16.                 Map next_name ↔ next_subset; Enqueue(Queue, next_subset)
+17.                 If (next_subset ∩ F ≠ ∅) then add next_name to F'
+18.             next_name ← LabelOf(next_subset)
+19.         δ'(curr_name, a) ← next_name
+20. Return DFA(Q', Σ, δ', S0, F')</pre>
+
+  <h2>3.2 Complexity Analysis</h2>
+  <ul>
+    <li><strong>State Space:</strong> Worst-case |<em>Q'</em>| &le; 2<sup>|<em>Q</em>|</sup>, though practical regular-language NFAs visit only a small fraction of reachable subsets.</li>
+    <li><strong>String Simulation Time:</strong> Once converted, testing a string of length <em>n</em> runs in strict <strong>O(<em>n</em>)</strong> deterministic time.</li>
+  </ul>
+
+  <!-- SECTION 4 -->
+  <div class="page-break"></div>
+  <h1>4. System Architecture &amp; Design</h1>
+  <p>
+    The simulator follows a clean modular pipeline separating user input, conversion logic, visualization, and string verification:
+  </p>
+
+  <div class="figure-box">
+    <svg width="640" height="230" viewBox="0 0 640 230" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+      <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+          <path d="M0,0 L0,6 L9,3 z" fill="#1e3a8a" />
+        </marker>
+      </defs>
+      <!-- Box 1: Input -->
+      <rect x="20" y="20" width="170" height="75" rx="8" fill="#eff6ff" stroke="#1e3a8a" stroke-width="2"/>
+      <text x="105" y="45" text-anchor="middle" font-weight="bold" font-size="12" fill="#1e3a8a">1. User Input Module</text>
+      <text x="105" y="64" text-anchor="middle" font-size="10" fill="#334155">States, Alphabet, δ, ε</text>
+      <text x="105" y="80" text-anchor="middle" font-size="10" fill="#334155">Presets &amp; Custom Grid</text>
+
+      <!-- Arrow 1->2 -->
+      <line x1="190" y1="57" x2="235" y2="57" stroke="#1e3a8a" stroke-width="2" marker-end="url(#arrow)"/>
+
+      <!-- Box 2: Engine -->
+      <rect x="240" y="15" width="185" height="85" rx="8" fill="#dbeafe" stroke="#1e3a8a" stroke-width="2"/>
+      <text x="332" y="40" text-anchor="middle" font-weight="bold" font-size="12" fill="#1e3a8a">2. Subset Construction</text>
+      <text x="332" y="58" text-anchor="middle" font-size="10" fill="#0f172a">ε-Closure &amp; Powerset BFS</text>
+      <text x="332" y="74" text-anchor="middle" font-size="10" fill="#0f172a">State Mapping (S0, S1...)</text>
+      <text x="332" y="90" text-anchor="middle" font-size="10" fill="#0f172a">Accept &amp; Trap Detection</text>
+
+      <!-- Arrow 2->3 -->
+      <line x1="425" y1="57" x2="465" y2="57" stroke="#1e3a8a" stroke-width="2" marker-end="url(#arrow)"/>
+
+      <!-- Box 3: Output Tables -->
+      <rect x="470" y="20" width="150" height="75" rx="8" fill="#eff6ff" stroke="#1e3a8a" stroke-width="2"/>
+      <text x="545" y="45" text-anchor="middle" font-weight="bold" font-size="12" fill="#1e3a8a">3. Table &amp; Log View</text>
+      <text x="545" y="64" text-anchor="middle" font-size="10" fill="#334155">NFA &amp; DFA Tables</text>
+      <text x="545" y="80" text-anchor="middle" font-size="10" fill="#334155">Step-by-Step Trace Log</text>
+
+      <!-- Down Arrows -->
+      <line x1="332" y1="100" x2="210" y2="140" stroke="#1e3a8a" stroke-width="2" marker-end="url(#arrow)"/>
+      <line x1="332" y1="100" x2="450" y2="140" stroke="#1e3a8a" stroke-width="2" marker-end="url(#arrow)"/>
+
+      <!-- Box 4: Visualizer -->
+      <rect x="100" y="145" width="200" height="68" rx="8" fill="#f0fdf4" stroke="#15803d" stroke-width="2"/>
+      <text x="200" y="170" text-anchor="middle" font-weight="bold" font-size="12" fill="#15803d">4. Graph Visualizer</text>
+      <text x="200" y="188" text-anchor="middle" font-size="10" fill="#334155">HTML5 Canvas / Tkinter</text>
+      <text x="200" y="203" text-anchor="middle" font-size="10" fill="#334155">Start Arrows, Loops &amp; Rings</text>
+
+      <!-- Box 5: String Simulator -->
+      <rect x="350" y="145" width="200" height="68" rx="8" fill="#f0fdf4" stroke="#15803d" stroke-width="2"/>
+      <text x="450" y="170" text-anchor="middle" font-weight="bold" font-size="12" fill="#15803d">5. String Testing Engine</text>
+      <text x="450" y="188" text-anchor="middle" font-size="10" fill="#334155">Path Trace &amp; Verdict</text>
+      <text x="450" y="203" text-anchor="middle" font-size="10" fill="#334155">Automated Batch Suite</text>
+    </svg>
+    <div class="figure-caption">Figure 1: Modular System Architecture of the NFA &rarr; DFA Simulator.</div>
+  </div>
+
+  <!-- SECTION 5 -->
+  <h1>5. Implementation Details &amp; Code Documentation</h1>
+  <p>
+    To ensure zero-dependency portability and effortless evaluation, the simulator is implemented in three structured, well-documented files:
+  </p>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>File Name</th>
+        <th>Role</th>
+        <th>Key Functions / Implementation Highlights</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>index.html</code></td>
+        <td>Primary Web UI</td>
+        <td>Zero-install browser app. Implements <code>epsilonClosure()</code>, <code>performConversion()</code>, <code>drawAutomata()</code> on HTML5 Canvas, <code>testString()</code>, and <code>runBatchTests()</code>.</td>
+      </tr>
+      <tr>
+        <td><code>simulator.py</code></td>
+        <td>Python Core Engine &amp; CLI</td>
+        <td>Defines <code>NFA</code> and <code>DFA</code> classes with full type hints and docstrings, <code>convert_nfa_to_dfa()</code>, formatted ASCII tables, <code>--test</code> suite, and <code>--interactive</code> CLI mode.</td>
+      </tr>
+      <tr>
+        <td><code>gui.py</code></td>
+        <td>Desktop Window GUI</td>
+        <td>Standard-library Tkinter application with <code>AutomataGUI</code> class, tabbed Treeview tables, interactive Canvas graph rendering, and preset loaders.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 6 -->
+  <h1>6. Simulator Screenshots &amp; Output Walkthrough</h1>
+  <p>
+    The following screenshots demonstrate a live run converting the NFA for strings containing <code>"ab"</code> into an equivalent 4-state DFA:
+  </p>
+
+  <div class="figure-box">
+    <img src="screenshots/fig1_input_config.png" alt="NFA Definition and Configuration UI">
+    <div class="figure-caption">Figure 2: NFA Input Configuration with Quick Presets and Dynamic Transition Grid.</div>
+  </div>
+
+  <div class="figure-box">
+    <img src="screenshots/fig2_tables_log.png" alt="Execution Log and Transition Tables">
+    <div class="figure-caption">Figure 3: Step-by-Step Subset Construction Log, Original NFA Table, and Generated DFA Mapping Table.</div>
+  </div>
+
+  <div class="figure-box">
+    <img src="screenshots/fig3_diagrams_sim.png" alt="State Diagrams and String Testing">
+    <div class="figure-caption">Figure 4: Rendered NFA &amp; DFA State Diagrams and String Simulation Interface.</div>
+  </div>
+
+  <!-- SECTION 7 -->
+  <div class="page-break"></div>
+  <h1>7. Testing &amp; Validation Results (Normal &amp; Edge Cases)</h1>
+  <p>
+    The simulator was verified against <strong>15 test cases</strong> spanning standard acceptance/rejection strings, &epsilon;-transitions, empty strings (&epsilon;), single-symbol inputs, and invalid alphabet characters. All test cases achieved 100% theoretical accuracy.
+  </p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Category</th>
+        <th>Automaton / Language</th>
+        <th>Input</th>
+        <th>Expected</th>
+        <th>Actual</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>TC-01</td><td>Normal</td><td>Ends with "01"</td><td><code>"01"</code></td><td>ACCEPT</td><td>ACCEPT</td><td><span class="badge-pass">PASS</span></td></tr>
+      <tr><td>TC-02</td><td>Normal</td><td>Ends with "01"</td><td><code>"1001"</code></td><td>ACCEPT</td><td>ACCEPT</td><td><span class="badge-pass">PASS</span></td></tr>
+      <tr><td>TC-03</td><td>Normal</td><td>Ends with "01"</td><td><code>"11101"</code></td><td>ACCEPT</td><td>ACCEPT</td><td><span class="badge-pass">PASS</span></td></tr>
+      <tr><td>TC-04</td><td>Normal Reject</td><td>Ends with "01"</td><td><code>"010"</code></td><td>REJECT</td><td>REJECT</td><td><span class="badge-pass">PASS</span></td></tr>
+      <tr><td>TC-05</td><td>Normal Reject</td><td>Ends with "01"</td><td><code>"1111"</code></td><td>REJECT</td><td>REJECT</td><td><span class="badge-pass">PASS</span></td></tr>
+      <tr><td>TC-06</td><td>Edge Case</td><td>Ends with "01" (Empty &epsilon;)</td><td><code>""</code></td><td>REJECT</td><td>REJECT</td><td><span class="badge-pass">PASS</span></td></tr>
+      <tr><td>TC-07</td><td>Edge Case</td><td>Ends with "01" (Single char)</td><td><code>"0"</code></td><td>REJECT</td><td>REJECT</td><td><span class="badge-pass">PASS</span></td></tr>
+      <tr><td>TC-08</td><td>Edge Case</td><td>Ends with "01" (Single char)</td><td><code>"1"</code></td><td>REJECT</td><td>REJECT</td><td><span class="badge-pass">PASS</span></td></tr>
+      <tr><td>TC-09</td><td>Normal (&epsilon;-NFA)</td><td>a*b via &epsilon;-jump</td><td><code>"b"</code></td><td>ACCEPT</td><td>ACCEPT</td><td><span class="badge-pass">PASS</span></td></tr>
+      <tr><td>TC-10</td><td>Normal (&epsilon;-NFA)</td><td>a*b via &epsilon;-jump</td><td><code>"ab"</code></td><td>ACCEPT</td><td>ACCEPT</td><td><span class="badge-pass">PASS</span></td></tr>
+      <tr><td>TC-11</td><td>Normal (&epsilon;-NFA)</td><td>a*b via &epsilon;-jump</td><td><code>"aab"</code></td><td>ACCEPT</td><td>ACCEPT</td><td><span class="badge-pass">PASS</span></td></tr>
+      <tr><td>TC-12</td><td>Edge Case (&epsilon;-NFA)</td><td>Non-accepting stop</td><td><code>"a"</code></td><td>REJECT</td><td>REJECT</td><td><span class="badge-pass">PASS</span></td></tr>
+      <tr><td>TC-13</td><td>Edge Case (&epsilon;-NFA)</td><td>Empty string &epsilon;</td><td><code>""</code></td><td>REJECT</td><td>REJECT</td><td><span class="badge-pass">PASS</span></td></tr>
+      <tr><td>TC-14</td><td>Edge Case</td><td>Even number of 0s (Empty &epsilon;)</td><td><code>""</code></td><td>ACCEPT</td><td>ACCEPT</td><td><span class="badge-pass">PASS</span></td></tr>
+      <tr><td>TC-15</td><td>Edge Case</td><td>Invalid alphabet symbol</td><td><code>"012"</code></td><td>REJECT</td><td>REJECT</td><td><span class="badge-pass">PASS</span></td></tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 8 -->
+  <h1>8. Individual Contribution Details</h1>
+  <p>
+    This project was completed independently as a <strong>solo submission</strong> by <strong>Dev Mittal (Enrollment No.: S24CSEU0833)</strong>. Complete ownership across all phases is summarized below:
+  </p>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Project Module</th>
+        <th>Responsibilities &amp; Deliverables</th>
+        <th>Contributor</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Algorithm &amp; Core Engine</td>
+        <td>Designed and implemented &epsilon;-closure traversal, Subset Construction BFS, dead-state handling, and O(n) DFA simulation in Python and JavaScript.</td>
+        <td>Dev Mittal (100%)</td>
+      </tr>
+      <tr>
+        <td>UI &amp; Graph Visualization</td>
+        <td>Built responsive Web UI (<code>index.html</code>) with Canvas state diagrams and Tkinter Desktop UI (<code>gui.py</code>).</td>
+        <td>Dev Mittal (100%)</td>
+      </tr>
+      <tr>
+        <td>Testing &amp; Documentation</td>
+        <td>Created 15 normal &amp; edge test cases, automated test runner, and authored the complete Technical Report.</td>
+        <td>Dev Mittal (100%)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 9 -->
+  <h1>9. Conclusion</h1>
+  <p>
+    The Automata Simulator successfully fulfills all requirements of Topic 1 (NFA &rarr; DFA Conversion). By combining an accurate Subset Construction and &epsilon;-closure engine with clear transition tables, subset mappings, live state diagrams, and an automated string verification suite, the tool bridges theoretical automata concepts and practical execution cleanly and reliably.
+  </p>
+
+</body>
+</html>

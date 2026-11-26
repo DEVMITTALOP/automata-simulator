@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Automata Simulator: NFA to DFA Conversion</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --primary-hover: #0284c7;
+      --accent: #818cf8;
+      --success: #34d399;
+      --danger: #f87171;
+      --warning: #fbbf24;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px 16px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    header {
+      text-align: center;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    header h1 {
+      font-size: 2rem;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    .badge-bar {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      background: #334155;
+      color: #e2e8f0;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .badge-primary {
+      background: rgba(56, 189, 248, 0.2);
+      color: var(--primary);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+    }
+
+    .badge-success {
+      background: rgba(52, 211, 153, 0.2);
+      color: var(--success);
+      border: 1px solid rgba(52, 211, 153, 0.4);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
+
+    .card h2 {
+      font-size: 1.25rem;
+      margin-bottom: 16px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Preset row */
+    .presets-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px dashed var(--card-border);
+    }
+
+    .preset-btn {
+      background: #273549;
+      color: #cbd5e1;
+      border: 1px solid #475569;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .preset-btn:hover {
+      background: var(--primary-hover);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    /* Form Grid */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    input[type="text"] {
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--primary);
+    }
+
+    /* Table styles */
+    .table-container {
+      overflow-x: auto;
+      margin: 14px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      border: 1px solid var(--card-border);
+      padding: 10px 14px;
+    }
+
+    th {
+      background: #0f172a;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .table-input {
+      background: transparent;
+      border: 1px dashed #475569;
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 4px;
+      width: 90%;
+      text-align: center;
+    }
+
+    .table-input:focus {
+      border-color: var(--primary);
+      outline: none;
+      background: #0f172a;
+    }
+
+    .btn {
+      background: var(--primary);
+      color: #0f172a;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: #7dd3fc;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: #334155;
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      background: #475569;
+    }
+
+    /* 2 Column Section for Tables & Diagrams */
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 860px) {
+      .grid-2col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Visual Graph Canvas */
+    .canvas-container {
+      background: #090d16;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      position: relative;
+      min-height: 280px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 280px;
+    }
+
+    /* Step-by-step Log */
+    .log-container {
+      background: #090d16;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 0.85rem;
+      max-height: 200px;
+      overflow-y: auto;
+      color: #38bdf8;
+      line-height: 1.6;
+    }
+
+    .log-item {
+      margin-bottom: 4px;
+    }
+    .log-highlight {
+      color: var(--success);
+      font-weight: bold;
+    }
+
+    /* String Testing Section */
+    .test-box {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .verdict-box {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-top: 12px;
+      display: none;
+    }
+
+    .verdict-box.accepted {
+      background: rgba(52, 211, 153, 0.15);
+      border: 1px solid var(--success);
+      color: var(--success);
+      display: block;
+    }
+
+    .verdict-box.rejected {
+      background: rgba(248, 113, 113, 0.15);
+      border: 1px solid var(--danger);
+      color: var(--danger);
+      display: block;
+    }
+
+    .trace-display {
+      margin-top: 8px;
+      font-family: monospace;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    .batch-table {
+      margin-top: 12px;
+    }
+
+    .pass-badge {
+      background: rgba(52, 211, 153, 0.2);
+      color: var(--success);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .fail-badge {
+      background: rgba(248, 113, 113, 0.2);
+      color: var(--danger);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <header>
+    <h1>Automata Simulator</h1>
+    <p>NFA to DFA Conversion via Subset Construction with Live Simulation</p>
+    <div class="badge-bar">
+      <span class="badge badge-primary">Subset Construction</span>
+      <span class="badge badge-primary">Epsilon (&epsilon;) Closure</span>
+      <span class="badge badge-success">Live State Diagrams</span>
+      <span class="badge badge-success">String Path Trace</span>
+      <span class="badge">Evaluation Ready</span>
+    </div>
+  </header>
+
+  <!-- Input Section -->
+  <section class="card">
+    <h2>
+      1. NFA Definition & Configuration
+      <span style="font-size:0.85rem; color:var(--text-muted); font-weight:normal;">Use presets or customize inputs</span>
+    </h2>
+
+    <!-- Preset buttons -->
+    <div class="presets-row">
+      <strong style="font-size:0.85rem; color:var(--text-muted);">Quick Presets:</strong>
+      <button class="preset-btn" onclick="loadPreset('endsWith01')">Ends with "01"</button>
+      <button class="preset-btn" onclick="loadPreset('containsAB')">Contains "ab"</button>
+      <button class="preset-btn" onclick="loadPreset('epsilonNFA')">With &epsilon; Transitions</button>
+      <button class="preset-btn" onclick="loadPreset('evenZeroes')">Even number of 0s</button>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="inputStates">States (comma separated):</label>
+        <input type="text" id="inputStates" value="q0, q1, q2" oninput="autoRefreshGrid()">
+      </div>
+      <div class="form-group">
+        <label for="inputAlphabet">Alphabet (comma separated):</label>
+        <input type="text" id="inputAlphabet" value="0, 1" oninput="autoRefreshGrid()">
+      </div>
+      <div class="form-group">
+        <label for="inputStart">Start State:</label>
+        <input type="text" id="inputStart" value="q0">
+      </div>
+      <div class="form-group">
+        <label for="inputAccept">Accept / Final States (comma separated):</label>
+        <input type="text" id="inputAccept" value="q2">
+      </div>
+    </div>
+
+    <div>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <label style="font-size:0.85rem; font-weight:600; color:var(--text-muted);">
+          NFA Transition Table (Multiple next states separated by comma, &Phi; or empty for no transition):
+        </label>
+        <button class="btn btn-secondary" style="padding:4px 10px; font-size:0.8rem;" onclick="generateTransitionInputs()">Refresh Table Grid</button>
+      </div>
+
+      <div class="table-container">
+        <table id="nfaInputTable">
+          <!-- Dynamically populated based on states and alphabet -->
+        </table>
+      </div>
+    </div>
+
+    <div style="margin-top:16px; display:flex; gap:12px;">
+      <button class="btn" onclick="performConversion()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
+        Convert NFA to DFA
+      </button>
+    </div>
+  </section>
+
+  <!-- Step-by-Step Construction Log -->
+  <section class="card" id="logSection" style="display:none;">
+    <h2>2. Subset Construction Step-by-Step Execution Log</h2>
+    <div class="log-container" id="constructionLog"></div>
+  </section>
+
+  <!-- Dual Tables & Visual Diagrams -->
+  <div class="grid-2col">
+    <!-- NFA Panel -->
+    <section class="card">
+      <h2>Original NFA Representation</h2>
+      <div class="table-container">
+        <table id="nfaDisplayTable"></table>
+      </div>
+      <div style="margin-top:14px;">
+        <span style="font-size:0.85rem; font-weight:600; color:var(--text-muted);">NFA State Diagram:</span>
+        <div class="canvas-container">
+          <canvas id="nfaCanvas"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Converted DFA Panel -->
+    <section class="card">
+      <h2>Generated DFA & State Mappings</h2>
+      <div class="table-container">
+        <table id="dfaDisplayTable"></table>
+      </div>
+      <div style="margin-top:14px;">
+        <span style="font-size:0.85rem; font-weight:600; color:var(--text-muted);">Generated DFA State Diagram:</span>
+        <div class="canvas-container">
+          <canvas id="dfaCanvas"></canvas>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- String Testing & Validation -->
+  <section class="card" id="testSection">
+    <h2>3. String Simulation & Equivalence Verification</h2>
+    <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:14px;">
+      Test custom strings on the generated DFA to observe step-by-step state transitions and accept/reject verdicts.
+    </p>
+
+    <div class="test-box">
+      <input type="text" id="testStringInput" placeholder="Enter test string (or leave empty for ε)" style="width: 260px;">
+      <button class="btn" onclick="testString()">Simulate String</button>
+      <button class="btn btn-secondary" onclick="runBatchTests()">Run Built-in Test Suite</button>
+    </div>
+
+    <div id="verdictBox" class="verdict-box">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <strong id="verdictTitle" style="font-size:1.1rem;"></strong>
+        <span id="verdictString" style="font-size:0.9rem;"></span>
+      </div>
+      <div class="trace-display" id="traceOutput"></div>
+    </div>
+
+    <!-- Batch Test Results Table -->
+    <div id="batchTestResults" style="display:none; margin-top:16px;">
+      <h3 style="font-size:1rem; color:var(--text); margin-bottom:8px;">Batch Test Suite Results (Normal & Edge Cases)</h3>
+      <div class="table-container">
+        <table id="batchResultsTable">
+          <thead>
+            <tr>
+              <th>Test Case Category</th>
+              <th>Input String</th>
+              <th>Expected</th>
+              <th>Actual Verdict</th>
+              <th>Result</th>
+              <th>Transition Trace</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  // Global State Objects
+  let currentNFA = null;
+  let currentDFA = null;
+
+  // Preset Configurations
+  const PRESETS = {
+    endsWith01: {
+      states: "q0, q1, q2",
+      alphabet: "0, 1",
+      start: "q0",
+      accept: "q2",
+      transitions: {
+        "q0-0": "q0, q1",
+        "q0-1": "q0",
+        "q0-eps": "",
+        "q1-0": "",
+        "q1-1": "q2",
+        "q1-eps": "",
+        "q2-0": "",
+        "q2-1": "",
+        "q2-eps": ""
+      },
+      tests: [
+        { str: "01", expected: true, desc: "Normal: Ends with '01'" },
+        { str: "1001", expected: true, desc: "Normal: Preceding 1s and 0s" },
+        { str: "11101", expected: true, desc: "Normal: Multiple 1s ending in 01" },
+        { str: "010", expected: false, desc: "Normal: Ends with 0" },
+        { str: "111", expected: false, desc: "Normal: Only 1s" },
+        { str: "", expected: false, desc: "Edge Case: Empty string ε" },
+        { str: "0", expected: false, desc: "Edge Case: Single symbol 0" },
+        { str: "1", expected: false, desc: "Edge Case: Single symbol 1" }
+      ]
+    },
+    containsAB: {
+      states: "q0, q1, q2",
+      alphabet: "a, b",
+      start: "q0",
+      accept: "q2",
+      transitions: {
+        "q0-a": "q0, q1",
+        "q0-b": "q0",
+        "q0-eps": "",
+        "q1-a": "",
+        "q1-b": "q2",
+        "q1-eps": "",
+        "q2-a": "q2",
+        "q2-b": "q2",
+        "q2-eps": ""
+      },
+      tests: [
+        { str: "ab", expected: true, desc: "Normal: Exact match 'ab'" },
+        { str: "aab", expected: true, desc: "Normal: Prefix 'a' then 'ab'" },
+        { str: "baba", expected: true, desc: "Normal: Contains 'ab' in middle" },
+        { str: "ba", expected: false, desc: "Normal: 'ba' does not contain 'ab'" },
+        { str: "aaaa", expected: false, desc: "Normal: All 'a's" },
+        { str: "", expected: false, desc: "Edge Case: Empty string ε" },
+        { str: "a", expected: false, desc: "Edge Case: Single symbol 'a'" }
+      ]
+    },
+    epsilonNFA: {
+      states: "A, B, C",
+      alphabet: "a, b",
+      start: "A",
+      accept: "C",
+      transitions: {
+        "A-a": "",
+        "A-b": "",
+        "A-eps": "B",
+        "B-a": "B",
+        "B-b": "C",
+        "B-eps": "",
+        "C-a": "",
+        "C-b": "",
+        "C-eps": ""
+      },
+      tests: [
+        { str: "b", expected: true, desc: "Normal: ε-step to B, then 'b' to accept C" },
+        { str: "ab", expected: true, desc: "Normal: ε-step to B, 'a' then 'b'" },
+        { str: "aab", expected: true, desc: "Normal: Multiple 'a's then 'b'" },
+        { str: "a", expected: false, desc: "Normal: Stops at non-accepting state B" },
+        { str: "", expected: false, desc: "Edge Case: Empty string ε" },
+        { str: "ba", expected: false, desc: "Edge Case: Invalid symbol sequence" }
+      ]
+    },
+    evenZeroes: {
+      states: "q0, q1",
+      alphabet: "0, 1",
+      start: "q0",
+      accept: "q0",
+      transitions: {
+        "q0-0": "q1",
+        "q0-1": "q0",
+        "q0-eps": "",
+        "q1-0": "q0",
+        "q1-1": "q1",
+        "q1-eps": ""
+      },
+      tests: [
+        { str: "", expected: true, desc: "Edge Case: Empty string has 0 zeroes (Even)" },
+        { str: "00", expected: true, desc: "Normal: Two zeroes (Even)" },
+        { str: "11001", expected: true, desc: "Normal: Two zeroes surrounded by 1s" },
+        { str: "0", expected: false, desc: "Normal: One zero (Odd)" },
+        { str: "000", expected: false, desc: "Normal: Three zeroes (Odd)" }
+      ]
+    }
+  };
+
+  let activePresetKey = "endsWith01";
+
+  function parseList(str) {
+    return str.split(",").map(s => s.trim()).filter(s => s.length > 0);
+  }
+
+  function loadPreset(key) {
+    activePresetKey = key;
+    const p = PRESETS[key];
+    document.getElementById("inputStates").value = p.states;
+    document.getElementById("inputAlphabet").value = p.alphabet;
+    document.getElementById("inputStart").value = p.start;
+    document.getElementById("inputAccept").value = p.accept;
+    generateTransitionInputs(p.transitions);
+    performConversion();
+  }
+
+  function autoRefreshGrid() {
+    const existing = {};
+    document.querySelectorAll("#nfaInputTable .table-input").forEach(inp => {
+      if (inp.id.startsWith("trans-")) {
+        existing[inp.id.slice(6)] = inp.value;
+      }
+    });
+    generateTransitionInputs(existing);
+  }
+
+  function generateTransitionInputs(prefillValues = {}) {
+    const states = parseList(document.getElementById("inputStates").value);
+    const alphabet = parseList(document.getElementById("inputAlphabet").value);
+    const table = document.getElementById("nfaInputTable");
+
+    let html = `<thead><tr><th>State</th>`;
+    alphabet.forEach(sym => {
+      html += `<th>Symbol '${sym}'</th>`;
+    });
+    html += `<th>&epsilon; (Epsilon)</th></tr></thead><tbody>`;
+
+    states.forEach(state => {
+      html += `<tr><td><strong>${state}</strong></td>`;
+      alphabet.forEach(sym => {
+        const id = `trans-${state}-${sym}`;
+        const val = prefillValues[`${state}-${sym}`] || "";
+        html += `<td><input type="text" class="table-input" id="${id}" value="${val}" placeholder="&Phi;"></td>`;
+      });
+      const epsId = `trans-${state}-eps`;
+      const epsVal = prefillValues[`${state}-eps`] || "";
+      html += `<td><input type="text" class="table-input" id="${epsId}" value="${epsVal}" placeholder="&Phi;"></td>`;
+      html += `</tr>`;
+    });
+    html += `</tbody>`;
+    table.innerHTML = html;
+  }
+
+  function epsilonClosure(stateSet, transitions) {
+    let closure = new Set(stateSet);
+    let stack = Array.from(stateSet);
+
+    while (stack.length > 0) {
+      let curr = stack.pop();
+      let epsKey = `${curr}-eps`;
+      let targets = transitions[epsKey] || [];
+      targets.forEach(nxt => {
+        if (!closure.has(nxt)) {
+          closure.add(nxt);
+          stack.push(nxt);
+        }
+      });
+    }
+    return closure;
+  }
+
+  function setToKey(s) {
+    return Array.from(s).sort().join(",");
+  }
+
+  function performConversion() {
+    const states = parseList(document.getElementById("inputStates").value);
+    const alphabet = parseList(document.getElementById("inputAlphabet").value);
+    const start = document.getElementById("inputStart").value.trim();
+    const accept = new Set(parseList(document.getElementById("inputAccept").value));
+
+    // Gather transitions
+    const transitions = {};
+    states.forEach(state => {
+      alphabet.forEach(sym => {
+        const inputElem = document.getElementById(`trans-${state}-${sym}`);
+        const val = inputElem ? inputElem.value : "";
+        transitions[`${state}-${sym}`] = parseList(val);
+      });
+      const epsElem = document.getElementById(`trans-${state}-eps`);
+      const epsVal = epsElem ? epsElem.value : "";
+      transitions[`${state}-eps`] = parseList(epsVal);
+    });
+
+    currentNFA = { states, alphabet, start, accept, transitions };
+
+    // Subset Construction
+    const logs = [];
+    logs.push(`[INIT] Start State = ${start}`);
+    const initialClosure = epsilonClosure(new Set([start]), transitions);
+    const initialKey = setToKey(initialClosure);
+    logs.push(`[INIT] ε-closure({${start}}) = {${initialKey}} -> DFA State S0`);
+
+    const subsetToName = new Map();
+    const nameToSubset = new Map();
+    subsetToName.set(initialKey, "S0");
+    nameToSubset.set("S0", initialClosure);
+
+    const queue = [initialClosure];
+    const dfaTransitions = {};
+    const dfaAcceptStates = new Set();
+    let stateCounter = 1;
+
+    // Check if S0 is accept
+    for (let st of initialClosure) {
+      if (accept.has(st)) {
+        dfaAcceptStates.add("S0");
+        break;
+      }
+    }
+
+    while (queue.length > 0) {
+      const currentSubset = queue.shift();
+      const currentKey = setToKey(currentSubset);
+      const currentName = subsetToName.get(currentKey);
+
+      alphabet.forEach(sym => {
+        // Move step
+        let moveSet = new Set();
+        currentSubset.forEach(st => {
+          let targets = transitions[`${st}-${sym}`] || [];
+          targets.forEach(t => moveSet.add(t));
+        });
+
+        // ε-closure step
+        let targetClosure = epsilonClosure(moveSet, transitions);
+        let targetKey = setToKey(targetClosure);
+
+        if (targetClosure.size === 0) {
+          // Dead / Trap state
+          targetKey = "DEAD";
+        }
+
+        if (!subsetToName.has(targetKey)) {
+          let newName = targetKey === "DEAD" ? "DEAD" : `S${stateCounter++}`;
+          subsetToName.set(targetKey, newName);
+          nameToSubset.set(newName, targetClosure);
+          if (targetKey !== "DEAD") {
+            queue.push(targetClosure);
+          }
+
+          // Check accept
+          for (let st of targetClosure) {
+            if (accept.has(st)) {
+              dfaAcceptStates.add(newName);
+              break;
+            }
+          }
+          logs.push(`[NEW DFA STATE] Discovered ${newName} = {${targetKey === "DEAD" ? "Φ" : targetKey}}`);
+        }
+
+        const destName = subsetToName.get(targetKey);
+        dfaTransitions[`${currentName}-${sym}`] = destName;
+        logs.push(`  &delta;(${currentName}, '${sym}') = &epsilon;-closure(move({${currentKey}}, '${sym}')) -> ${destName}`);
+      });
+    }
+
+    const dfaStates = Array.from(nameToSubset.keys());
+    currentDFA = {
+      states: dfaStates,
+      alphabet,
+      start: "S0",
+      accept: dfaAcceptStates,
+      transitions: dfaTransitions,
+      mapping: nameToSubset
+    };
+
+    // Render Logs
+    document.getElementById("logSection").style.display = "block";
+    const logElem = document.getElementById("constructionLog");
+    logElem.innerHTML = logs.map(l => `<div class="log-item">${l}</div>`).join("");
+
+    // Render Displays
+    renderNFADisplay();
+    renderDFADisplay();
+    drawAutomata(currentNFA, "nfaCanvas", false);
+    drawAutomata(currentDFA, "dfaCanvas", true);
+
+    // Hide old batch results
+    document.getElementById("batchTestResults").style.display = "none";
+    document.getElementById("verdictBox").style.display = "none";
+  }
+
+  function renderNFADisplay() {
+    const table = document.getElementById("nfaDisplayTable");
+    let html = `<thead><tr><th>State</th>`;
+    currentNFA.alphabet.forEach(sym => html += `<th>${sym}</th>`);
+    html += `<th>&epsilon;</th></tr></thead><tbody>`;
+
+    currentNFA.states.forEach(st => {
+      let prefix = "";
+      if (st === currentNFA.start) prefix += "&rarr; ";
+      if (currentNFA.accept.has(st)) prefix += "* ";
+      html += `<tr><td><strong>${prefix}${st}</strong></td>`;
+
+      currentNFA.alphabet.forEach(sym => {
+        let targets = currentNFA.transitions[`${st}-${sym}`] || [];
+        html += `<td>${targets.length > 0 ? "{" + targets.join(", ") + "}" : "&Phi;"}</td>`;
+      });
+      let eps = currentNFA.transitions[`${st}-eps`] || [];
+      html += `<td>${eps.length > 0 ? "{" + eps.join(", ") + "}" : "&Phi;"}</td></tr>`;
+    });
+    html += `</tbody>`;
+    table.innerHTML = html;
+  }
+
+  function renderDFADisplay() {
+    const table = document.getElementById("dfaDisplayTable");
+    let html = `<thead><tr><th>DFA State</th><th>Subset Mapping</th>`;
+    currentDFA.alphabet.forEach(sym => html += `<th>${sym}</th>`);
+    html += `</tr></thead><tbody>`;
+
+    currentDFA.states.forEach(st => {
+      let prefix = "";
+      if (st === currentDFA.start) prefix += "&rarr; ";
+      if (currentDFA.accept.has(st)) prefix += "* ";
+
+      let subset = currentDFA.mapping.get(st) || new Set();
+      let subsetStr = subset.size > 0 ? "{" + Array.from(subset).join(", ") + "}" : "&Phi;";
+
+      html += `<tr><td><strong>${prefix}${st}</strong></td><td style="color:var(--accent);">${subsetStr}</td>`;
+      currentDFA.alphabet.forEach(sym => {
+        let dest = currentDFA.transitions[`${st}-${sym}`] || "DEAD";
+        html += `<td><strong>${dest}</strong></td>`;
+      });
+      html += `</tr>`;
+    });
+    html += `</tbody>`;
+    table.innerHTML = html;
+  }
+
+  // Visual Graph Rendering on Canvas
+  function drawAutomata(automaton, canvasId, isDFA) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    
+    // Scale for high dpi
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * 2;
+    canvas.height = rect.height * 2;
+    ctx.scale(2, 2);
+
+    ctx.clearRect(0, 0, rect.width, rect.height);
+
+    const states = automaton.states;
+    if (states.length === 0) return;
+
+    // Node layout positions
+    const pos = {};
+    const radius = 22;
+    const count = states.length;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const circleRadius = Math.min(rect.width, rect.height) * 0.32;
+
+    states.forEach((st, idx) => {
+      let angle = (2 * Math.PI * idx) / count;
+      if (count <= 3) {
+        // Linear horizontal alignment for 2-3 states for crisp readability
+        let spacing = rect.width / (count + 1);
+        pos[st] = { x: spacing * (idx + 1), y: centerY };
+      } else {
+        pos[st] = {
+          x: centerX + circleRadius * Math.cos(angle),
+          y: centerY + circleRadius * Math.sin(angle)
+        };
+      }
+    });
+
+    // Helper: Draw Arrow
+    function drawArrow(fromX, fromY, toX, toY, label) {
+      ctx.strokeStyle = "#64748b";
+      ctx.fillStyle = "#64748b";
+      ctx.lineWidth = 1.5;
+
+      if (fromX === toX && fromY === toY) {
+        // Self-loop
+        ctx.beginPath();
+        ctx.arc(fromX, fromY - radius - 10, 12, 0, 2 * Math.PI);
+        ctx.stroke();
+
+        ctx.fillStyle = "#38bdf8";
+        ctx.font = "bold 11px sans-serif";
+        ctx.fillText(label, fromX, fromY - radius - 26);
+        return;
+      }
+
+      // Curved link between different nodes
+      let dx = toX - fromX;
+      let dy = toY - fromY;
+      let dist = Math.hypot(dx, dy);
+      let nx = dx / dist;
+      let ny = dy / dist;
+
+      let startX = fromX + nx * radius;
+      let startY = fromY + ny * radius;
+      let endX = toX - nx * radius;
+      let endY = toY - ny * radius;
+
+      // Slight curve
+      let curveOffset = 18;
+      let midX = (startX + endX) / 2 - ny * curveOffset;
+      let midY = (startY + endY) / 2 + nx * curveOffset;
+
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.quadraticCurveTo(midX, midY, endX, endY);
+      ctx.stroke();
+
+      // Arrowhead
+      let angle = Math.atan2(endY - midY, endX - midX);
+      ctx.beginPath();
+      ctx.moveTo(endX, endY);
+      ctx.lineTo(endX - 8 * Math.cos(angle - Math.PI / 6), endY - 8 * Math.sin(angle - Math.PI / 6));
+      ctx.lineTo(endX - 8 * Math.cos(angle + Math.PI / 6), endY - 8 * Math.sin(angle + Math.PI / 6));
+      ctx.closePath();
+      ctx.fill();
+
+      // Label
+      ctx.fillStyle = "#38bdf8";
+      ctx.font = "bold 11px sans-serif";
+      ctx.fillText(label, midX, midY - 3);
+    }
+
+    // Group transitions by pairs
+    const edgeMap = {};
+    if (isDFA) {
+      states.forEach(st => {
+        automaton.alphabet.forEach(sym => {
+          let dest = automaton.transitions[`${st}-${sym}`];
+          if (dest) {
+            let key = `${st}->${dest}`;
+            edgeMap[key] = edgeMap[key] ? edgeMap[key] + "," + sym : sym;
+          }
+        });
+      });
+    } else {
+      states.forEach(st => {
+        automaton.alphabet.forEach(sym => {
+          let targets = automaton.transitions[`${st}-${sym}`] || [];
+          targets.forEach(dest => {
+            let key = `${st}->${dest}`;
+            edgeMap[key] = edgeMap[key] ? edgeMap[key] + "," + sym : sym;
+          });
+        });
+        let eps = automaton.transitions[`${st}-eps`] || [];
+        eps.forEach(dest => {
+          let key = `${st}->${dest}`;
+          edgeMap[key] = edgeMap[key] ? edgeMap[key] + ",ε" : "ε";
+        });
+      });
+    }
+
+    // Draw all edges
+    for (let key in edgeMap) {
+      let [src, dst] = key.split("->");
+      if (pos[src] && pos[dst]) {
+        drawArrow(pos[src].x, pos[src].y, pos[dst].x, pos[dst].y, edgeMap[key]);
+      }
+    }
+
+    // Draw nodes
+    states.forEach(st => {
+      let p = pos[st];
+      if (!p) return;
+
+      // Circle
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, radius, 0, 2 * Math.PI);
+      ctx.fillStyle = "#1e293b";
+      ctx.fill();
+      ctx.strokeStyle = automaton.accept.has(st) ? "#34d399" : "#38bdf8";
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      // Double circle if accept state
+      if (automaton.accept.has(st)) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, radius - 4, 0, 2 * Math.PI);
+        ctx.stroke();
+      }
+
+      // Start arrow
+      if (st === automaton.start) {
+        ctx.strokeStyle = "#fbbf24";
+        ctx.fillStyle = "#fbbf24";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(p.x - radius - 20, p.y);
+        ctx.lineTo(p.x - radius - 2, p.y);
+        ctx.stroke();
+        // Arrowhead
+        ctx.beginPath();
+        ctx.moveTo(p.x - radius - 2, p.y);
+        ctx.lineTo(p.x - radius - 8, p.y - 5);
+        ctx.lineTo(p.x - radius - 8, p.y + 5);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // State label
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 12px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(st, p.x, p.y);
+    });
+  }
+
+  // String Testing Simulation
+  function testString() {
+    if (!currentDFA) {
+      alert("Please convert the NFA first!");
+      return;
+    }
+
+    const input = document.getElementById("testStringInput").value.trim();
+    const verdictBox = document.getElementById("verdictBox");
+    const verdictTitle = document.getElementById("verdictTitle");
+    const verdictString = document.getElementById("verdictString");
+    const traceOutput = document.getElementById("traceOutput");
+
+    let curr = currentDFA.start;
+    let trace = [];
+    let valid = true;
+
+    if (input === "" || input === "ε") {
+      let accepted = currentDFA.accept.has(curr);
+      displayVerdict(accepted, input || "ε", `Start state '${curr}' is ${accepted ? "an ACCEPT" : "a NON-ACCEPT"} state.`);
+      return;
+    }
+
+    for (let i = 0; i < input.length; i++) {
+      let sym = input[i];
+      if (!currentDFA.alphabet.includes(sym)) {
+        displayVerdict(false, input, `Invalid symbol '${sym}' not in alphabet {${currentDFA.alphabet.join(", ")}}`);
+        return;
+      }
+      let nxt = currentDFA.transitions[`${curr}-${sym}`] || "DEAD";
+      trace.push(`${curr} --(${sym})--> ${nxt}`);
+      curr = nxt;
+      if (curr === "DEAD") {
+        valid = false;
+        break;
+      }
+    }
+
+    let accepted = valid && currentDFA.accept.has(curr);
+    let traceText = trace.join(" | ") + `  ==> Final State: [${curr}]`;
+    displayVerdict(accepted, input, traceText);
+  }
+
+  function displayVerdict(isAccepted, str, trace) {
+    const verdictBox = document.getElementById("verdictBox");
+    const verdictTitle = document.getElementById("verdictTitle");
+    const verdictString = document.getElementById("verdictString");
+    const traceOutput = document.getElementById("traceOutput");
+
+    verdictBox.style.display = "block";
+    verdictBox.className = "verdict-box " + (isAccepted ? "accepted" : "rejected");
+    verdictTitle.innerText = isAccepted ? "✓ ACCEPTED" : "✗ REJECTED";
+    verdictString.innerText = `String: "${str}"`;
+    traceOutput.innerHTML = `<strong>Transition Path:</strong> ${trace}`;
+  }
+
+  function runBatchTests() {
+    if (!currentDFA) {
+      alert("Please convert NFA to DFA first!");
+      return;
+    }
+
+    const testSuite = PRESETS[activePresetKey] ? PRESETS[activePresetKey].tests : [
+      { str: "01", expected: true, desc: "Standard Test" },
+      { str: "", expected: false, desc: "Empty String ε" }
+    ];
+
+    const resultsContainer = document.getElementById("batchTestResults");
+    const tbody = document.querySelector("#batchResultsTable tbody");
+    tbody.innerHTML = "";
+
+    testSuite.forEach(t => {
+      let curr = currentDFA.start;
+      let path = [curr];
+      let valid = true;
+
+      if (t.str !== "" && t.str !== "ε") {
+        for (let sym of t.str) {
+          let nxt = currentDFA.transitions[`${curr}-${sym}`] || "DEAD";
+          path.push(`--(${sym})--> ${nxt}`);
+          curr = nxt;
+          if (curr === "DEAD") break;
+        }
+      }
+
+      let actual = currentDFA.accept.has(curr);
+      let passed = (actual === t.expected);
+
+      let row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${t.desc}</td>
+        <td><code>"${t.str}"</code></td>
+        <td>${t.expected ? "<span class='pass-badge'>ACCEPT</span>" : "<span class='fail-badge'>REJECT</span>"}</td>
+        <td>${actual ? "<span class='pass-badge'>ACCEPT</span>" : "<span class='fail-badge'>REJECT</span>"}</td>
+        <td>${passed ? "<span class='pass-badge'>✓ PASS</span>" : "<span class='fail-badge'>✗ FAIL</span>"}</td>
+        <td style="font-family:monospace; font-size:0.8rem; text-align:left;">${path.join(" ")}</td>
+      `;
+      tbody.appendChild(row);
+    });
+
+    resultsContainer.style.display = "block";
+  }
+
+  // Auto initialize on page load
+  window.addEventListener("DOMContentLoaded", () => {
+    loadPreset("endsWith01");
+  });
+</script>
+</body>
+</html>
