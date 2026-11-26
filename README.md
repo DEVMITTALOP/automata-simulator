@@ -41,10 +41,4 @@ python simulator.py --interactive
 
 ---
 
-## 📋 Evaluation Checklist & Deliverables Covered
-- [x] **Implementation of Simulator Features (2 Marks):** Subset construction, $\epsilon$-closure, user-defined inputs, dynamic transition tables, state mapping ($\{q_0, q_1\} \to S_1$).
-- [x] **Demonstration & Testing (2 Marks):** Normal cases, edge cases (empty string $\epsilon$, single symbols, rejection, dead states) verified with 100% pass rate.
-- [x] **Technical Documentation & Report (2 Marks):** Formal theory, algorithms, complexity, architecture, test matrix in `REPORT.md`.
-- [x] **Report Format & Code Documentation (1 Mark):** Clean, readable, well-commented code and structured documentation.
-- [x] **Presentation & Technical Explanation (1 Mark):** 2-minute demo walkthrough script and viva Q&A included in report.
-- [x] **Individual Contribution & Teamwork (1 Mark):** Full solo author ownership section detailing contribution across all modules.
+
